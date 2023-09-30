@@ -28,26 +28,53 @@ task :migrate_contentdm, [:csv_file,:cdm_collection_id,:output_name] do |_t, arg
     csv_contents = CSV.parse(csv_text, headers: true)
 
     # Ensure that the output directory exists.
-    FileUtils.mkdir_p(args.output_dir) unless Dir.exist?(args.output_dir)    
+    FileUtils.mkdir_p(args.output_dir) unless Dir.exist?(args.output_dir)
+    
+    # setup output data array
+    output_csv = []
+    existing_fields = csv_contents.headers
+    # add rows
+    new_fields = 'filename,object_location,image_small,image_thumb,errors'.split(',')
+    existing_fields.push(new_fields)
+    # add out output array
+    output_csv.push(existing_fields)
         
     # iterate on csv rows
     csv_contents.each_with_index do | item, index |
       # check for required fields 
-      unless item[cdmid] && item[objectid] && item[format]
+      unless item['cdmid'] && item['objectid'] && item['format']
         puts "Skipping Row #{index} -- missing required fields (cdmid, objectid, or format)."
+        # add to output array with error
+
         next
       else
-        # figure out format and extension
-        item_format = 
-        item_extension = 
-        base_name = item[objectid] + item_extension
-        # figure out download name
-        name_new = File.join(args.output_dir, base_name)
-        # check if file already exists
-        if File.exist?(name_new)
-            puts "Skipping Row #{index} -- new filename '#{name_new}' already exists."
+        # do youtube items
+        if item['youtubeid']
+          # create display_template, image_small, image_thumb
+        else
+          # figure out format and extension
+          item_format = item['format']
+          if item_format == "image/jpeg"
+            item_extension = ".jpg"
+          elsif item_format == "application/pdf"
+            item_extension = ".pdf"
+          elsif item_format == "audio/mp3"
+            item_extension = ".mp3"
+          elsif item_format == "video/mp4"
+            item_extension = ".mp4"
+          else
+            puts "Skipping Row #{index} -- unsupported format value."
             next
-        end
+          end
+          base_name = item[objectid] + item_extension
+          # figure out download name
+          name_new = File.join(args.output_dir, base_name)
+          # check if file already exists
+          if File.exist?(name_new)
+              puts "Skipping Row #{index} -- new filename '#{name_new}' already exists."
+              next
+          end
+          # download and rename
         
 
 
