@@ -18,6 +18,7 @@ task :migrate_contentdm, [:csv_file,:cdm_collection_id,:output_name] do |_t, arg
   # set some constants
   cdm_url = 'https://digital.lib.uidaho.edu'
   output_dir = output_name + "/"
+  output_csv_name = 'migrated.csv'
 
   # check for csv file
   if !File.exist?(args.csv_file)
@@ -34,7 +35,7 @@ task :migrate_contentdm, [:csv_file,:cdm_collection_id,:output_name] do |_t, arg
     output_csv = []
     existing_fields = csv_contents.headers
     # add rows
-    new_fields = 'filename,object_location,image_small,image_thumb,errors'.split(',')
+    new_fields = 'display_template,filename,object_location,image_small,image_thumb,errors'.split(',')
     existing_fields.push(new_fields)
     # add out output array
     output_csv.push(existing_fields)
@@ -42,66 +43,78 @@ task :migrate_contentdm, [:csv_file,:cdm_collection_id,:output_name] do |_t, arg
     # iterate on csv rows
     csv_contents.each_with_index do | item, index |
       # check for required fields 
-      unless item['cdmid'] && item['objectid'] && item['format']
-        puts "Skipping Row #{index} -- missing required fields (cdmid, objectid, or format)."
+      if !item['objectid']
+
+        puts "Skipping Row #{index} -- missing required objectid."
         # add to output array with error
-
+        add_fields = [ '', '', '', '', '', 'item missing objectid' ]
+        item.push(add_fields)
+        # add out output array
+        output_csv.push(item)
+        # skip, done
         next
-      else
-        # do youtube items
-        if item['youtubeid']
-          # create display_template, image_small, image_thumb
+
+      # youtube items
+      elsif item['youtubeid']
+        # create display_template, image_small, image_thumb
+        item_display_template = "video"
+        item_filename = ""
+        item_object_location = "https://youtu.be/" + item['youtubeid']
+        item_image_small = 'https://img.youtube.com/vi/' + item['youtubeid'] + '/hqdefault.jpg'
+        item_image_thumb = 'https://img.youtube.com/vi/' + item['youtubeid'] + '/hqdefault.jpg'
+        item_errors = ""
+        add_fields = [ item_display_template, item_filename, item_object_location, item_image_small, item_image_thumb, item_errors ]
+        item.push(add_fields)
+        # add out output array
+        output_csv.push(item)
+        # done
+        next
+
+      # cdm items 
+      elsif item['format'] && item['cdmid']
+        # figure out format and extension
+        item_format = item['format']
+        if item_format == "image/jpeg"
+          item_extension = ".jpg"
+        elsif item_format == "application/pdf"
+          item_extension = ".pdf"
+        elsif item_format == "audio/mp3"
+          item_extension = ".mp3"
+        elsif item_format == "video/mp4"
+          item_extension = ".mp4"
         else
-          # figure out format and extension
-          item_format = item['format']
-          if item_format == "image/jpeg"
-            item_extension = ".jpg"
-          elsif item_format == "application/pdf"
-            item_extension = ".pdf"
-          elsif item_format == "audio/mp3"
-            item_extension = ".mp3"
-          elsif item_format == "video/mp4"
-            item_extension = ".mp4"
-          else
-            puts "Skipping Row #{index} -- unsupported format value."
-            next
-          end
-          base_name = item[objectid] + item_extension
-          # figure out download name
-          name_new = File.join(args.output_dir, base_name)
-          # check if file already exists
-          if File.exist?(name_new)
-              puts "Skipping Row #{index} -- new filename '#{name_new}' already exists."
-              next
-          end
-          # download and rename
-        
-
-
-
-
-        # check for rename
-        if item[args.download_rename]
-          # check if file already exists
-          name_new = File.join(args.output_dir, item[args.download_rename])
-          if File.exist?(name_new)
-            puts "new filename '#{name_new}' already exists, skipping!"
-            next
-          end
-          puts "downloading"
-          # call wget
-          system('wget','-O', name_new, item[args.download_link])
-        else
-          puts "downloading"
-          # call wget 
-          system('wget', item[args.download_link], "-P", args.output_dir)
+          puts "Skipping Row #{index} -- unsupported format value."
+          next
         end
-      else
-        puts "no download url!"
+        base_name = item[objectid] + item_extension
+        # figure out download name
+        name_new = File.join(args.output_dir, base_name)
+        # check if file already exists
+        if File.exist?(name_new)
+            puts "Skipping Row #{index} -- new filename '#{name_new}' already exists."
+            next
+        end
+        # download and rename
+
+        
+      else 
+        
+        puts "Skipping Row #{index} -- missing required fields cdmid or format)."
+        # add to output array with error
+        add_fields = [ '', '', '', '', '', 'item missing cdmid or format' ]
+        item.push(add_fields)
+        # add out output array
+        output_csv.push(item)
+        # skip, done
+        next
+
       end
     end
 
-    puts "done downloading."
+    # write output csv
+    CSV.open(output_csv_name, 'w') do |csv|
+      csv << output_csv
+    end
 
   end
 
