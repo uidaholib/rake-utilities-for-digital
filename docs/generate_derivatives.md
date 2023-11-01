@@ -18,17 +18,18 @@ The following configuration options are available:
 | density | the pixel density used to generate PDF thumbnails | 300 |
 | missing | whether to only generate derivatives that don't already exist | true |
 | compress_originals | Optimize the original image files | false |
+| input_dir | Input directory | objects |
 
 You can configure any or all of these options by specifying them in the rake command like so:
 
 ```
-rake generate_derivatives[<thumb_size>,<small_size>,<density>,<missing>,<compress_originals>]
+rake generate_derivatives[<thumb_size>,<small_size>,<density>,<missing>,<compress_originals>,<input_dir>]
 ```
 
 Here's an example of overriding all of the option values:
 
 ```
-rake generate_derivatives[100x100,300x300,70,false,false]
+rake generate_derivatives[100x100,300x300,70,false,false,'images']
 ```
 
 It's also possible to specify individual options that you want to override, leaving the others at their defaults.
