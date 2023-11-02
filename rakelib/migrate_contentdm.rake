@@ -11,13 +11,14 @@ desc "migrate contentdm collection csv"
 task :migrate_contentdm, [:csv_file,:cdm_collection_id,:output_dir] do |_t, args|
   # set default arguments
   args.with_defaults(
-    csv_file: 'download.csv',
+    csv_file: 'migrate.csv',
     cdm_collection_id: 'hwhi',
-    output_dir: 'new/'
+    output_dir: 'new'
   )
   # set some constants
   cdm_url = 'https://digital.lib.uidaho.edu'
-  output_csv_name = 'migrated.csv'
+  output_csv = args.output_dir + '_migrated.csv'
+  output_csv_name = File.join(args.output_dir, output_csv)
 
   # check for csv file
   if !File.exist?(args.csv_file)
@@ -141,8 +142,6 @@ task :migrate_contentdm, [:csv_file,:cdm_collection_id,:output_dir] do |_t, args
         # call wget
         system('wget','-O', item_new_file, item_download)
 
-        # then run generate_derivatives or later in batch?
-
         # add to output array with new fields
         item_array.push(item_display_template, item_filename, item_object_location, item_image_small, item_image_thumb, '')
         # add to output array
@@ -167,6 +166,10 @@ task :migrate_contentdm, [:csv_file,:cdm_collection_id,:output_dir] do |_t, args
         csv << row
       end
     end
+
+    # run generate_derivatives on downloaded objects
+    puts "Generating derivatives"
+    Rake::Task['generate_derivatives'].invoke('400x400','900x900','300',true,false,args.output_dir)
 
   end
 
