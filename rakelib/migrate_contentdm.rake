@@ -17,6 +17,7 @@ task :migrate_contentdm, [:csv_file,:cdm_collection_id,:output_dir] do |_t, args
   )
   # set some constants
   cdm_url = 'https://digital.lib.uidaho.edu'
+  objects_url = 'https://objects.lib.uidaho.edu'
   output_csv = args.output_dir + '_migrated.csv'
   output_csv_name = File.join(args.output_dir, output_csv)
 
@@ -84,23 +85,23 @@ task :migrate_contentdm, [:csv_file,:cdm_collection_id,:output_dir] do |_t, args
         if item_format == "image/jpeg"
           item_display_template = "image"
           item_filename = item_base_name + ".jpg"
-          item_object_location = "/" + item_filename
-          item_image_small = "/small/" + item_base_name + "_sm.jpg"
-          item_image_thumb = "/thumbs/" + item_base_name + "_th.jpg"
+          item_object_location = objects_url + "/" + item_filename
+          item_image_small = objects_url + "/small/" + item_base_name + "_sm.jpg"
+          item_image_thumb = objects_url + "/thumbs/" + item_base_name + "_th.jpg"
           item_download = cdm_url + "/digital/iiif/" + item_collection_id + "/" + item['cdmid'] + "/full/max/0/default.jpg"
 
         elsif item_format == "application/pdf"
           item_display_template = "pdf"
           item_filename = item_base_name + ".pdf"
-          item_object_location = "/" + item_filename
-          item_image_small = "/small/" + item_base_name + "_sm.jpg"
-          item_image_thumb = "/thumbs/" + item_base_name + "_th.jpg"
+          item_object_location = objects_url + "/" + item_filename
+          item_image_small = objects_url + "/small/" + item_base_name + "_sm.jpg"
+          item_image_thumb = objects_url + "/thumbs/" + item_base_name + "_th.jpg"
           item_download = cdm_url + "/utils/getfile/collection/" + item_collection_id + "/id/" + item['cdmid'] + ".pdf"
 
         elsif item_format == "audio/mp3"
           item_display_template = "audio"
           item_filename = item_base_name + ".mp3"
-          item_object_location = "/" + item_filename
+          item_object_location = objects_url + "/" + item_filename
           item_image_small = ""
           item_image_thumb = ""
           item_download = cdm_url + "/utils/getstream/collection/" + item_collection_id + "/id/" + item['cdmid'] 
@@ -108,7 +109,7 @@ task :migrate_contentdm, [:csv_file,:cdm_collection_id,:output_dir] do |_t, args
         elsif item_format == "video/mp4"
           item_display_template = "video"
           item_filename = item_base_name + ".mp4"
-          item_object_location = "/" + item_filename
+          item_object_location = objects_url + "/" + item_filename
           item_image_small = ""
           item_image_thumb = ""
           item_download = cdm_url + "/utils/getstream/collection/" + item_collection_id + "/id/" + item['cdmid'] 
