@@ -46,23 +46,24 @@ end
 
 
 desc 'Generate derivative image files from collection objects'
-task :generate_derivatives, [:thumbs_size, :small_size, :density, :missing, :compress_originals] do |_t, args|
+task :generate_derivatives, [:thumbs_size, :small_size, :density, :missing, :compress_originals, :input_dir] do |_t, args|
   # set default arguments
   args.with_defaults(
     thumbs_size: '300x300',
     small_size: '800x800',
     density: '300',
     missing: 'true',
-    compress_originals: 'false'
+    compress_originals: 'false',
+    input_dir: 'objects'
   )
 
   # set the folder locations
-  objects_dir = 'objects'
-  thumb_image_dir = 'objects/thumbs'
-  small_image_dir = 'objects/small'
+  objects_dir = args.input_dir
+  thumb_image_dir = objects_dir + '/thumbs'
+  small_image_dir = objects_dir + '/small'
 
   # Ensure that the output directories exist.
-  [thumb_image_dir, small_image_dir].each do |dir|
+  [objects_dir, thumb_image_dir, small_image_dir].each do |dir|
     FileUtils.mkdir_p(dir) unless Dir.exist?(dir)
   end
 
