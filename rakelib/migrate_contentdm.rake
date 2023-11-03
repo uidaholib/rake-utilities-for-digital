@@ -17,7 +17,7 @@ task :migrate_contentdm, [:csv_file,:cdm_collection_id,:output_dir] do |_t, args
   )
   # set some constants
   cdm_url = 'https://digital.lib.uidaho.edu'
-  objects_url = 'https://objects.lib.uidaho.edu'
+  objects_url = 'https://objects.lib.uidaho.edu/' + args.output_dir
   output_csv = args.output_dir + '_migrated.csv'
   output_csv_name = File.join(args.output_dir, output_csv)
 
