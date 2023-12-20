@@ -98,6 +98,16 @@ task :migrate_contentdm, [:csv_file,:cdm_collection_id,:output_dir] do |_t, args
           item_image_small = objects_url + "/small/" + item_base_name + "_sm.jpg"
           item_image_thumb = objects_url + "/thumbs/" + item_base_name + "_th.jpg"
           item_download = cdm_url + "/utils/getfile/collection/" + item_collection_id + "/id/" + item['cdmid'] + ".pdf"
+          #item_download = "https://cdm17254.contentdm.oclc.org/digital/api/collection/" + item_collection_id + "/id/" + item['cdmid'] + "/download"
+        
+        elsif item_format == "html"
+          item_display_template = "record"
+          item_filename = item_base_name + ".html"
+          item_object_location = objects_url + "/" + item_filename
+          #item_image_small = objects_url + "/small/" + item_base_name + "_sm.jpg"
+          #item_image_thumb = objects_url + "/thumbs/" + item_base_name + "_th.jpg"
+          #item_download = cdm_url + "/utils/getfile/collection/" + item_collection_id + "/id/" + item['cdmid'] + ".pdf"
+          item_download = "https://cdm17254.contentdm.oclc.org/digital/api/collection/" + item_collection_id + "/id/" + item['cdmid'] + "/download"
 
         elsif item_format == "audio/mp3"
           item_display_template = "audio"
