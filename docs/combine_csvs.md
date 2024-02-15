@@ -16,13 +16,11 @@ The options can be changed by passing arguments with the rake command.
 | option | description | default value |
 | --- | --- | --- |
 | input_dir | the name of the folder containing all the CSVs | 'csvs' |
-| field_list | comma separated list of field names to extract | 'objectid,title,cdmid' |
+| field_list | semicolon separated list of field names to extract | 'objectid;title;cdmid' |
 | output_csv | the filename for new CSV containing the combined data | 'combined.csv' |
 
 
 The order follows [:input_dir,:field_list,:output_csv].
 For example, 
 
-`rake migrate_contentdm['example_folder','subjects,type,format,series','example.csv']`
-
-**Note:** use single quotes `'` around your field_list option. Rake has trouble parsing these arguments if you use `"`!
+`rake migrate_contentdm['example_folder','subjects;type;format;series','example.csv']`

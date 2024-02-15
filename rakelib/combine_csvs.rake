@@ -9,7 +9,7 @@ task :combine_csvs, [:input_dir,:field_list,:output_csv] do |_t, args|
     # set default arguments
     args.with_defaults(
         input_dir: 'csvs',
-        field_list: 'objectid,title,cdmid',
+        field_list: 'objectid;title;cdmid',
         output_csv: 'combined.csv'
     )
 
@@ -21,8 +21,8 @@ task :combine_csvs, [:input_dir,:field_list,:output_csv] do |_t, args|
 
     # set up output data array
     output_array = []
-    output_fields = args.field_list.split(',')
-    output_header = args.field_list.split(',')
+    output_fields = args.field_list.split(';')
+    output_header = args.field_list.split(';')
     output_header.push("source_csv")
     output_array.push(output_header)
 
