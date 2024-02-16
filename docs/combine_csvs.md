@@ -23,4 +23,4 @@ The options can be changed by passing arguments with the rake command.
 The order follows [:input_dir,:field_list,:output_csv].
 For example, 
 
-`rake migrate_contentdm['example_folder','subjects;type;format;series','example.csv']`
+`rake combine_csvs['example_folder','subjects;type;format;series','example.csv']`
