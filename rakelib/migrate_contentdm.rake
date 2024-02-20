@@ -181,7 +181,7 @@ task :migrate_contentdm, [:csv_file,:cdm_collection_id,:output_dir] do |_t, args
 
     # run generate_derivatives on downloaded objects
     puts "Generating derivatives"
-    Rake::Task['generate_derivatives'].invoke('400x400','900x900','300',true,false,args.output_dir)
+    Rake::Task['generate_derivatives'].invoke('450x','900x900','300',true,false,args.output_dir)
 
   end
 
