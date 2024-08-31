@@ -13,7 +13,7 @@ The following configuration options are available:
 
 | option | description | default value |
 | --- | --- | --- |
-| thumbs_size | the dimensions of the generated thumbnail images | 300x300 |
+| thumbs_size | the dimensions of the generated thumbnail images | 450x |
 | small_size | the dimensions of the generated small images | 800x800 |
 | density | the pixel density used to generate PDF thumbnails | 300 |
 | missing | whether to only generate derivatives that don't already exist | true |
