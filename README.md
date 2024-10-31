@@ -33,3 +33,7 @@ Each argument must be surrounded by double quotes `"`, separated by comma `,`, w
 
 To use all the default options, do not add arguments to the task, e.g. `rake resize_images`.
 To use the default option for some arguments, leave the place blank with no space, e.g. `rake resize_images["300x300",,,"output_folder"]` (the second and third argument will be the default).
+
+**On Mac:** the default shell in terminal is now zsh (rather than Bash). 
+Using arguments will end up with odd errors, so you will have to manually escape the square brackets, e.g. `rake resize_images\["300x300",,,"output_folder"\]`. 
+Alternatively, on VS Code or other IDE you can often easily switch to a Bash profile (rather than zsh).
