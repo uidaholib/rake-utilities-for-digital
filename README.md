@@ -16,6 +16,10 @@ Each task itself is an individual `.rake` file in the "rakelib/" directory, that
 The general workflow is to temporarily copy CSVs and folders of object files into this repository folder to work on using the Rake tasks, then copy the outputs to where ever they need to go. 
 Don't commit the inputs and outputs into this repository, as it is just for maintaining the Rake tasks!
 
+*Note:* many of these are fairly idiosyncratic task, but are simple with lots of comments, so can be modified for a variety of purposes!
+
+Created with Ruby 3.2.x+.
+
 ## Using Rake Tasks
 
 To use a Rake task you will open your terminal in the root of this repository. 
