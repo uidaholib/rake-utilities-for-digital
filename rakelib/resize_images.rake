@@ -1,32 +1,34 @@
 ###############################################################################
 # TASK: resize_images
 #
-# create smaller images for image files in the 'objects' folder
+# create smaller images for all image files in the 'objects' folder
+# requires ImageMagick installed!
 ###############################################################################
 
 require 'mini_magick'
 
 def process_image(filename, output_filename, size)
   puts "Creating: #{output_filename}"
-    begin
-      MiniMagick.convert do |convert|
-        convert << filename
-        convert.resize(size)
-        convert.flatten
-        convert << output_filename
-      end
-    rescue StandardError => e
-      puts "Error creating #{filename}: #{e.message}"
+  begin
+    # use mini_magick to call ImageMagick
+    MiniMagick.convert do |convert|
+      convert << filename
+      convert.resize(size)
+      convert.flatten
+      convert << output_filename
     end
+  rescue StandardError => e
+    puts "Error creating #{filename}: #{e.message}"
   end
 end
 
 
 desc 'Resize image files from folder'
-task :generate_derivatives, [:new_size, :input_dir, :output_dir] do |_t, args|
+task :resize_images, [:new_size, :new_format, :input_dir, :output_dir] do |_t, args|
   # set default arguments
   args.with_defaults(
-    new_size: '5000x5000',
+    new_size: '3000x3000',
+    new_format: false,
     input_dir: 'objects',
     output_dir: 'resized'
   )
@@ -39,13 +41,13 @@ task :generate_derivatives, [:new_size, :input_dir, :output_dir] do |_t, args|
   # ensure input directory exists
   if !Dir.exist?(objects_dir)
     puts "Input folder does not exist! resize_images not run."
-    break
+    exit
   end
 
   # ensure output directory exists
   FileUtils.mkdir_p(output_dir) unless Dir.exist?(output_dir)
   
-  # support these file types
+  # support these file extensions
   EXTNAME_TYPE_MAP = {
     '.jpeg' => :image,
     '.jpg' => :image,
@@ -54,8 +56,22 @@ task :generate_derivatives, [:new_size, :input_dir, :output_dir] do |_t, args|
     '.tiff' => :image
   }.freeze
 
+  # set new format
+  if args.new_format != false 
+    # check for valid extension
+    if EXTNAME_TYPE_MAP[args.new_format]
+      new_format = args.new_format
+    else 
+      puts "Invalid new format #{args.new_format}. resize_images not run."
+      exit
+    end
+  else 
+    new_format = false
+  end
+
   # Iterate over all files in the objects directory.
   Dir.glob(File.join(objects_dir, '*')).each do |filename|
+    
     # Skip subdirectories 
     if File.directory?(filename)
       next
@@ -73,7 +89,12 @@ task :generate_derivatives, [:new_size, :input_dir, :output_dir] do |_t, args|
     base_filename = File.basename(filename, '.*').downcase
 
     # Create new filename
-    new_filename = File.join(output_dir, "#{base_filename}.#{extname}")
+    if args.new_format != false 
+      new_extension = new_format
+    else 
+      new_extension = extname 
+    end
+    new_filename = File.join(output_dir, "#{base_filename}#{new_extension}")
 
     # check if file already exists
     if File.exist?(new_filename)
@@ -86,5 +107,5 @@ task :generate_derivatives, [:new_size, :input_dir, :output_dir] do |_t, args|
     
   end
   
-  puts "\e[32mImages resized to '#{output_dir}.\e[0m"
+  puts "\e[32mImages output to '#{output_dir}'.\e[0m"
 end
