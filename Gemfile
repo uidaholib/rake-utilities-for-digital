@@ -6,6 +6,7 @@ gem 'rake'
 gem 'csv'
 gem 'fileutils'
 gem 'mini_magick'
+gem 'open3'
 
 unless Gem.win_platform?
   gem 'image_optim'

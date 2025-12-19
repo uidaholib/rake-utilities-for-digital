@@ -8,6 +8,7 @@
 
 require 'csv'
 require 'fileutils'
+require 'open3'
 
 ###############################################################################
 # Helper Functions
